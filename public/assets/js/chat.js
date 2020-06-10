@@ -5,9 +5,13 @@ const chatWrapperEl = document.querySelector('#chat-wrapper');
 const usernameForm = document.querySelector('#username-form');
 const messageForm = document.querySelector('#message-form');
 const messageWrapper = document.querySelector('#gameboard');
+const startGame = document.querySelector('#start-game');
 
 
 const img = document.createElement('img');
+
+var clickedTime; var createdTime; var reactionTime; 
+
 
 function getRandomPosition(element) {
 	var x = document.querySelector("#gameboard").offsetHeight-element.clientHeight;
@@ -16,16 +20,6 @@ function getRandomPosition(element) {
 	var randomY = Math.floor(Math.random()*y);
 	return [randomX,randomY];
 }
-window.onload = function (){ 
-	var img = document.createElement('img');
-	img.setAttribute("style", "position:absolute;");
-	img.setAttribute("src", "../assets/images/virus.png");
-	document.querySelector("#gameboard").appendChild(img);
-	var xy = getRandomPosition(img);
-	img.style.top = xy[0] + 'px';
-	img.style.left = xy[1] + 'px';
-};
-
 
 function addvirus(){ 
 	var img = document.createElement('img');
@@ -39,6 +33,15 @@ function addvirus(){
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
   }
+startGame.addEventListener('click', e =>{
+	gameImg = document.querySelector("img")
+	e.target.remove()
+	setTimeout(function() {
+		addvirus();
+		createdTime=Date.now();
+	}, 1000);
+})
+
 messageWrapper.addEventListener('click', e => { 
 
 	gameImg = document.querySelector("img")
@@ -48,14 +51,24 @@ messageWrapper.addEventListener('click', e => {
 		console.log("NOT A VIRUS")
 	}else{
 		e.target.remove();
-		setTimeout(function() {
-			addvirus();
-		}, 1000);
+			clickedTime=Date.now();
+			reactionTime=(clickedTime-createdTime)/1000;
+			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + reactionTime + "seconds";
+			console.log(reactionTime);			
+
+			setTimeout(function() {
+
+				addvirus();
+				createdTime=Date.now();
+
+			}, 1000);
+		
 	}
-
-
-	
 });
+
+			
+
+
 
 let username = null;
 
