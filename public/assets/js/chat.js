@@ -12,8 +12,8 @@ const img = document.createElement('img');
 function getRandomPosition(element) {
 	var x = document.querySelector("#gameboard").offsetHeight-element.clientHeight;
 	var y = document.querySelector("#gameboard").offsetWidth-element.clientWidth;
-	var randomX = Math.floor(Math.random()* x);
-	var randomY = Math.floor(Math.random()* y);
+	var randomX = Math.floor(Math.random()*x);
+	var randomY = Math.floor(Math.random()*y);
 	return [randomX,randomY];
 }
 window.onload = function (){ 
@@ -22,8 +22,8 @@ window.onload = function (){
 	img.setAttribute("src", "../assets/images/virus.png");
 	document.querySelector("#gameboard").appendChild(img);
 	var xy = getRandomPosition(img);
-	img.style.top = xy[10] + 'px';
-	img.style.left = xy[11] + 'px';
+	img.style.top = xy[0] + 'px';
+	img.style.left = xy[1] + 'px';
 };
 
 
@@ -36,6 +36,9 @@ function addvirus(){
 	img.style.top = xy[0] + 'px';
 	img.style.left = xy[1] + 'px';
 };
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }
 messageWrapper.addEventListener('click', e => { 
 
 	gameImg = document.querySelector("img")
@@ -45,7 +48,9 @@ messageWrapper.addEventListener('click', e => {
 		console.log("NOT A VIRUS")
 	}else{
 		e.target.remove();
-		addvirus();
+		setTimeout(function() {
+			addvirus();
+		}, 1000);
 	}
 
 

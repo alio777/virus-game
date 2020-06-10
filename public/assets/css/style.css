@@ -70,8 +70,6 @@
 
 #gameboard {
 	background-color: #555;
-	height: 500px;
-	width: 500px;
-	margin: auto auto;
-	margin-top: 5em;
+	height: 100%;
+	width: 100%;
 }
