@@ -27,6 +27,12 @@ const io = SocketIO(server);
 
 io.on('connection', require('../controllers/socket_controller'));
 
+io.on('connection', function (socket){
+    socket.on('screen', function () {
+        socket.broadcast.emit('screen');
+    });
+});
+
 /**
  * Listen on provided port, on all network interfaces.
  */
