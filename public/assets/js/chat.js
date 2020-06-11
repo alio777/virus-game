@@ -30,16 +30,21 @@ function addvirus(){
 	img.style.top = xy[0] + 'px';
 	img.style.left = xy[1] + 'px';
 };
+
+function roundToOne(num) {    
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
-  }
+}
 startGame.addEventListener('click', e =>{
 	gameImg = document.querySelector("img")
 	e.target.remove()
 	setTimeout(function() {
 		addvirus();
 		createdTime=Date.now();
-	}, 1000);
+	}, Math.floor(Math.random(5000)*1000));
 })
 
 messageWrapper.addEventListener('click', e => { 
@@ -53,7 +58,8 @@ messageWrapper.addEventListener('click', e => {
 		e.target.remove();
 			clickedTime=Date.now();
 			reactionTime=(clickedTime-createdTime)/1000;
-			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + reactionTime + "seconds";
+			const endTime = roundToOne(reactionTime);
+			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
 			console.log(reactionTime);			
 
 			setTimeout(function() {
@@ -61,7 +67,7 @@ messageWrapper.addEventListener('click', e => {
 				addvirus();
 				createdTime=Date.now();
 
-			}, 1000);
+			}, Math.floor(Math.random(5000)*1000));
 		
 	}
 });
