@@ -45,7 +45,7 @@
 }
 
 #users h2 {
-	background-color: rgb(59, 66, 80);
+	background-color: cornflowerblue;
 	padding: 0.5rem 0.75rem;
 	color: white;
 }
@@ -67,7 +67,6 @@
 #messages .notice {
 	font-style: italic;
 }
-
 #gameboard {
 	background-color: #555;
 	height: 100%;

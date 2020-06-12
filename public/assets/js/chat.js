@@ -1,5 +1,15 @@
 const socket = io();
 
+//const startEl = document.querySelector('#start');
+//const chatWrapperEl = document.querySelector('#chat-wrapper');
+//const usernameForm = document.querySelector('#username-form');
+//const messageForm = document.querySelector('#message-form');
+
+
+
+
+
+
 const startEl = document.querySelector('#start');
 const chatWrapperEl = document.querySelector('#chat-wrapper');
 const usernameForm = document.querySelector('#username-form');
@@ -19,6 +29,7 @@ function addvirus(){
 	var img = document.createElement('img');
 	img.setAttribute("style", "position:absolute;");
 	img.setAttribute("src", "../assets/images/virus.png");
+	img.setAttribute("id", "bilden");
 	document.querySelector("#gameboard").appendChild(img);
 	var xy = getRandomPosition(img);
 	img.style.top = xy[0] + 'px';
@@ -34,39 +45,95 @@ function startGame (){
 	gameImg = document.querySelector("img")
 	setTimeout(function() {
 		addvirus();
+
 		createdTime=Date.now();
-	}, Math.floor(Math.random(5000)*1000));			
+	}, Math.floor(Math.random(5000)*1000));	
+
+			
 };
+gameBoard.addEventListener('click', e => { 
+
+	const gameImg = document.querySelector("img")
+	console.log(e.target);
+	
+	if(e.target !== gameImg) {
+		console.log("Click on a VIRUS!")
+	}else {
+		e.target.remove();
+		clickedTime=Date.now();
+		reactionTime=(clickedTime-createdTime)/1000;
+		const endTime = roundToOne(reactionTime);
+		document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
+		console.log(reactionTime);			
+
+		setTimeout(function() {
+			addvirus();
+			createdTime=Date.now();
+		}, Math.floor(Math.random(5000)*1000));
+	}
+});
+
+
+
+
+
+
+function remover (mssg) {
+		gameBoard.addEventListener('click', e => { 
+			const gameImg = document.querySelector("img")
+
+			console.log(e.target);
+			mssg = gameImg;
+			if(mssg !== gameImg) {
+				console.log("Click on a VIRUS!")
+			}else {
+				e.target.remove();
+				clickedTime=Date.now();
+				reactionTime=(clickedTime-createdTime)/1000;
+				const endTime = roundToOne(reactionTime);
+				document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
+				console.log(reactionTime);			
+
+				setTimeout(function() {
+					addvirus();
+					createdTime=Date.now();
+				}, Math.floor(Math.random(5000)*1000));
+			}
+		});
+}
+
+let username = null;
+
+const addMessageToChat = (msg, ownMsg = false) => {
+	const msgEl = document.createElement('img');
+	startGame(msgEl);
+
+	document.querySelector("#bilden").addEventListener('click', e => {
+		if (e.target.tagName === "IMG"){
+			remover(msgEl);
+		}else{
+			console.log("only wall");
+		}
+	});
+	msgEl.classList.add(ownMsg ? 'list-group-item-primary' : 'list-group-item-secondary');
+
+	const username = ownMsg ? 'You' : msg.username;
+	msgEl.innerHTML = msg.content;
+
+	document.querySelector('#gameboard').appendChild(msgEl);
+}
 
 const updateOnlineUsers = (users) => {
 	document.querySelector('#online-users').innerHTML = users.map(user => `<li class="user">${user}</li>`).join("");
 }
 
-	
-
-
-
 // get username from form and emit `register-user`-event to server
 usernameForm.addEventListener('submit', e => {
 	e.preventDefault();
 
-	socket.emit('screen'); 
-
-	waiting = document.querySelector('#wait');
-
 	username = document.querySelector('#username').value;
 	socket.emit('register-user', username, (status) => {
 		console.log("Server acknowledged the registration :D", status);
-
-		if(status.onlineUsers.length === 2){
-			startGame();
-			socket.on('screen', function() {
-				startGame();
-			});
-
-		}else{
-			waiting.innerHTML = `<h2>Waiting for another player to connect...</h2>`
-		}
 
 		if (status.joinChat) {
 			startEl.classList.add('hide');
@@ -75,14 +142,30 @@ usernameForm.addEventListener('submit', e => {
 			updateOnlineUsers(status.onlineUsers);
 		}
 	});
+
 });
 
+messageForm.addEventListener('submit', e => {
+	e.preventDefault();
 
+	const messageEl = document.querySelector('#gameboard');
+	console.log("detta är gameboard", messageEl);
+	const msg = {
+		content: messageEl.value,
+	}
+
+	socket.emit('chatmsg', msg);
+	startGame(msg, true);
+
+
+
+	messageEl.value = '';
+});
 
 socket.on('reconnect', () => {
-	if(username){
+	if (username) {
 		socket.emit('register-user', username, () => {
-			console.log("Server aknowledge our reconnet!")
+			console.log("The server acknowledged our reconnect.");
 		});
 	}
 });
@@ -91,62 +174,6 @@ socket.on('online-users', (users) => {
 	updateOnlineUsers(users);
 });
 
-gameBoard.addEventListener('click', e => { 
-
-	gameImg = document.querySelector("img")
-	console.log(e.target);
-
-	e.target.remove();
-	clickedTime=Date.now();
-	reactionTime=(clickedTime-createdTime)/1000;
-	const endTime = roundToOne(reactionTime);
-	document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
-	console.log(reactionTime);			
-
-	setTimeout(function() {
-		addvirus();
-		createdTime=Date.now();
-	}, Math.floor(Math.random(5000)*1000));
-});
-
-
-
-
-// const addMessageToChat = (msg, ownMsg = false) => {
-// 	const msgEl = document.createElement('li');
-// 	msgEl.classList.add('list-group-item', 'message');
-// 	msgEl.classList.add(ownMsg ? 'list-group-item-primary' : 'list-group-item-secondary');
-
-// 	const username = ownMsg ? 'You' : msg.username;
-// 	msgEl.innerHTML = `<span class="user">${username}</span>: ${msg.content}`;
-
-// 	document.querySelector('#messages').appendChild(msgEl);
-// }
-
-// messageForm.addEventListener('submit', e => {
-// 	e.preventDefault();
-
-// 	const messageEl = document.querySelector('#message');
-// 	const msg = {
-// 		content: messageEl.value,
-// 		username: document.querySelector('#username').value,
-// 	}
-
-// 	socket.emit('chatmsg', msg);
-// 	addMessageToChat(msg, true);
-
-// 	messageEl.value = '';
-// });
-
-
-// 	socket.on('chatmsg', (msg) => {
-// 		addMessageToChat(msg);
-// 	});
-
-
-
-
-
 // socket.on('new-user-connected', (username) => {
 // 	addNoticeToChat(`${username} connected to the chat 🥳!`);
 // });
@@ -154,3 +181,7 @@ gameBoard.addEventListener('click', e => {
 // socket.on('user-disconnected', (username) => {
 // 	addNoticeToChat(`${username} left the chat 😢...`);
 // });
+
+socket.on('chatmsg', (msg) => {
+	addMessageToChat(msg);
+});

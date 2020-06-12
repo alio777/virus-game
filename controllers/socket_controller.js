@@ -38,6 +38,8 @@ function handleChatMsg (msg) {
 	this.broadcast.emit('chatmsg', msg);
 }
 
+
+
 /**
  * Handle a new user connecting
  */
@@ -50,13 +52,11 @@ function handleRegisterUser(username, callback) {
 		onlineUsers: getOnlineUsers(),
 	});
 
-
 	// broadcast to all connected sockets EXCEPT ourselves
 	this.broadcast.emit('new-user-connected', username);
 
 	// broadcast online users to all connected sockets EXCEPT ourselves
 	this.broadcast.emit('online-users', getOnlineUsers());
-
 }
 
 module.exports = function(socket) {
