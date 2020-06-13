@@ -8,6 +8,12 @@ const gameBoard = document.querySelector('#gameboard');
 
 const img = document.createElement('img');
 
+var clickedTime; 
+var createdTime; 
+var reactionTime; 
+
+let username = null;
+
 function remover (mssg) {
 	gameBoard.addEventListener('click', e => { 
 
@@ -52,7 +58,6 @@ function addvirus(){
 function roundToOne(num) {    
     return +(Math.round(num + "e+2")  + "e-2");
 }
-var clickedTime; var createdTime; var reactionTime; 
 
 function startGame (){
 	//document.querySelector('#wait').innerHTML = '';
@@ -63,23 +68,10 @@ function startGame (){
 	}, Math.floor(Math.random(5000)*1000));			
 };
 
-let username = null;
-
-const addMessageToChat = (msg, ownMsg = false) => {
-	const msgEl = document.createElement('img');
-	startGame(msgEl);
-
-	msgEl.classList.add(ownMsg ? 'list-group-item-primary' : 'list-group-item-secondary');
-
-	const username = ownMsg ? 'You' : msg.username;
-	msgEl.innerHTML = msg.content;
-
-	document.querySelector('#gameboard').appendChild(msgEl);
-}
-
 const updateOnlineUsers = (users) => {
 	document.querySelector('#online-users').innerHTML = users.map(user => `<li class="user">${user}</li>`).join("");
 }
+
 
 // get username from form and emit `register-user`-event to server
 usernameForm.addEventListener('submit', e => {
@@ -99,8 +91,7 @@ usernameForm.addEventListener('submit', e => {
 
 });
 
-messageForm.addEventListener('submit', e => {
-	e.preventDefault();
+messageForm.addEventListener('click', e => {
 
 	const messageEl = document.querySelector('#gameboard');
 	console.log("detta är gameboard", messageEl);
@@ -116,26 +107,24 @@ messageForm.addEventListener('submit', e => {
 	messageEl.value = '';
 });
 
-socket.on('reconnect', () => {
-	if (username) {
-		socket.emit('register-user', username, () => {
-			console.log("The server acknowledged our reconnect.");
-		});
-	}
-});
+// const addMessageToChat = (msg, ownMsg = false) => {
+// 	const msgEl = document.createElement('img');
+// 	//startGame(msgEl);
+
+// 	msgEl.classList.add(ownMsg ? 'list-group-item-primary' : 'list-group-item-secondary');
+
+// 	const username = ownMsg ? 'You' : msg.username;
+// 	msgEl.innerHTML = msg.content;
+
+// 	document.querySelector('#gameboard').appendChild(msgEl);
+// }
+
 
 socket.on('online-users', (users) => {
 	updateOnlineUsers(users);
 });
 
-// socket.on('new-user-connected', (username) => {
-// 	addNoticeToChat(`${username} connected to the chat 🥳!`);
-// });
-
-// socket.on('user-disconnected', (username) => {
-// 	addNoticeToChat(`${username} left the chat 😢...`);
-// });
-
 socket.on('chatmsg', (msg) => {
-	addMessageToChat(msg);
+	startGame(msg);
+	console.log("här är längst ner");
 });
