@@ -5,6 +5,7 @@
 const debug = require('debug')('09-simple-chat:socket_controller');
 const users = {};
 
+
 /**
  * Get usernames of online users
  */
@@ -30,12 +31,18 @@ function handleUserDisconnect() {
 /**
  * Handle incoming chat-message
  */
-function handleChatMsg (msg) {
-	debug("Someone sent something nice: '%s'", msg);
-	//io.emit('chatmsg', msg); // emit to all connected sockets
 
+
+
+function handleChatMsg (msg, ranPos) {
+	debug("Someone sent something nice: '%s'",  msg);
+	debug("Someone sent something nice: '%s'",  ranPos);
+	//io.emit('chatmsg', msg); // emit to all connected sockets
+	
+	
 	// broadcast to all connected sockets EXCEPT ourselves
-	this.broadcast.emit('chatmsg', msg);
+	this.broadcast.emit('chatmsg', msg, ranPos);
+
 }
 
 

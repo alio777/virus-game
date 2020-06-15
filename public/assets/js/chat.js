@@ -14,62 +14,65 @@ var reactionTime;
 
 let username = null;
 
-function remover (mssg) {
-	gameBoard.addEventListener('click', e => { 
 
-		console.log(e.target);
+	// gameBoard.addEventListener('click', e => { 
 
-		if(e.target !== mssg) {
-			console.log("Click on a VIRUS!")
-		}else {
-			e.target.remove();
-			clickedTime=Date.now();
-			reactionTime=(clickedTime-createdTime)/1000;
-			const endTime = roundToOne(reactionTime);
-			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
-			console.log(reactionTime);			
+	// 	console.log(e.target);
 
-			setTimeout(function() {
-				addvirus();
-				createdTime=Date.now();
-			}, Math.floor(Math.random(5000)*1000));
-		}
-	});
-}
+	// 	if(e.target !== img) {
+	// 		console.log("Click on a VIRUS!")
+	// 	}else {
+	// 		e.target.remove();
+	// 		clickedTime=Date.now();
+	// 		reactionTime=(clickedTime-createdTime)/1000;
+	// 		const endTime = roundToOne(reactionTime);
+	// 		document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
+	// 		console.log(reactionTime);			
+
+	// 		setTimeout(function() {
+	// 			addvirus();
+	// 			createdTime=Date.now();
+	// 		}, Math.floor(Math.random(5000)*1000));
+	// 	}
+	// });
+
 
 function getRandomPosition(element) {
-	var x = document.querySelector("#gameboard").offsetHeight-element.clientHeight;
-	var y = document.querySelector("#gameboard").offsetWidth-element.clientWidth;
-	var randomX = Math.floor(Math.random()*x);
-	var randomY = Math.floor(Math.random()*y);
+	var randomX = Math.floor(Math.random()*400 + 50);
+	var randomY = Math.floor(Math.random()*480);
 	return [randomX,randomY];
 }
-function addvirus(){ 
-	var img = document.createElement('img');
-	img.setAttribute("style", "position:absolute;");
-	img.setAttribute("src", "../assets/images/virus.png");
-	img.setAttribute("id", "bilden");
-	document.querySelector("#gameboard").appendChild(img);
-	var xy = getRandomPosition(img);
-	img.style.top = xy[0] + 'px';
-	img.style.left = xy[1] + 'px';
-	remover(img);
-};
+// function addvirus(){ 
+	
+// 	var img = document.createElement('img');
+// 	img.setAttribute("style", "position:absolute;");
+// 	img.setAttribute("src", "../assets/images/virus.png");
+// 	img.setAttribute("id", "bilden");
+// 	document.querySelector("#gameboard").appendChild(img);
+// 	var xy = getRandomPosition(img);
+// 	img.style.top = xy[0] + 'px';
+// 	img.style.left = xy[1] + 'px';
+// 	remover(img);
+	
+// };
 function roundToOne(num) {    
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
-function startGame (){
-	//document.querySelector('#wait').innerHTML = '';
-	gameImg = document.querySelector("img")
-	setTimeout(function() {
-		addvirus();
-		createdTime=Date.now();
-	}, Math.floor(Math.random(5000)*1000));			
-};
+// function startGame (){
+// 	//document.querySelector('#wait').innerHTML = '';
+// 	gameImg = document.querySelector("img")
+// 	setTimeout(function() {
+// 		addvirus();
+// 		createdTime=Date.now();
+// 	}, Math.floor(Math.random(5000)*1000));			
+// };
 
 const updateOnlineUsers = (users) => {
 	document.querySelector('#online-users').innerHTML = users.map(user => `<li class="user">${user}</li>`).join("");
+}
+const updateMessage = (message) => {
+	document.querySelector('#gameBoard').innerHTML = `<div class="message">${message}</div>`;
 }
 
 
@@ -91,40 +94,84 @@ usernameForm.addEventListener('submit', e => {
 
 });
 
+// const arr = [10, 200, 300, 45, 577, 6, 7, 8, 9 ,10];
+
+const addMessageToChat = (msg, ranPos) => {
+	var img = document.createElement('img');
+	img.setAttribute("style", "position:absolute;");
+	img.setAttribute("src", "../assets/images/virus.png");
+	img.setAttribute("id", "bilden");
+	document.querySelector("#gameboard").appendChild(img);
+	//var xy = getRandomPosition(img);
+	img.style.top = ranPos[0] + 'px';
+	img.style.left = ranPos[1] + 'px';
+	
+	img.innerHTML = msg.content;
+
+	document.querySelector('#gameboard').appendChild(img);
+}
+
 messageForm.addEventListener('click', e => {
 
 	const messageEl = document.querySelector('#gameboard');
-	console.log("detta är gameboard", messageEl);
-	const msg = {
-		content: messageEl.value,
-	}
+	const position = getRandomPosition(messageEl);
+	
+	
+	
 
-	socket.emit('chatmsg', msg);
-	startGame(msg, true);
+	socket.emit('chatmsg', messageEl, position);
+	addMessageToChat(messageEl, position);	
+	gameBoard.addEventListener('click', e => { 
+		gameImg = document.querySelector("img")
 
+		if(e.target !== gameImg) {
+			console.log("Click on a VIRUS!")
+		}else {
+			e.target.remove();
+			clickedTime=Date.now();
+			reactionTime=(clickedTime-createdTime)/1000;
+			const endTime = roundToOne(reactionTime);
+			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
+			console.log(reactionTime);			
 
+			setTimeout(function() {
+				addMessageToChat(messageEl, position);
+				createdTime=Date.now();
+			}, Math.floor(Math.random(5000)*1000));
+		}
+	});
 
-	messageEl.value = '';
 });
 
-// const addMessageToChat = (msg, ownMsg = false) => {
-// 	const msgEl = document.createElement('img');
-// 	//startGame(msgEl);
-
-// 	msgEl.classList.add(ownMsg ? 'list-group-item-primary' : 'list-group-item-secondary');
-
-// 	const username = ownMsg ? 'You' : msg.username;
-// 	msgEl.innerHTML = msg.content;
-
-// 	document.querySelector('#gameboard').appendChild(msgEl);
-// }
 
 
 socket.on('online-users', (users) => {
 	updateOnlineUsers(users);
 });
 
-socket.on('chatmsg', (msg) => {
-	startGame(msg);
-	console.log("här är längst ner");
+socket.on('chatmsg', (msg, ranPos) => {
+
+	addMessageToChat(msg, ranPos);
+	gameBoard.addEventListener('click', e => { 
+		gameImg = document.querySelector("img")
+
+		if(e.target !== gameImg) {
+			console.log("Click on a VIRUS!")
+		}else {
+			e.target.remove();
+			clickedTime=Date.now();
+			reactionTime=(clickedTime-createdTime)/1000;
+			const endTime = roundToOne(reactionTime);
+			document.getElementById("printReactionTime").innerHTML="Your Reaction Time is: " + endTime + "seconds";
+			console.log(reactionTime);			
+
+			setTimeout(function() {
+				addMessageToChat(msg, ranPos);
+				createdTime=Date.now();
+			}, Math.floor(Math.random(5000)*1000));
+		}
+	});
+	
+	console.log("CLIENT NR 2");
 });
+
