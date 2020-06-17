@@ -152,6 +152,9 @@ playerNickname.addEventListener('submit', e => {
 
 
 // all the socket.on methods
+socket.on('disconnect', (username) => {
+	addNoticeToChat(`${username} left the chat 😢...`);
+});
 socket.on('players-online', (players) => {
     playersLob = players;
     document.querySelector("#playerOneName").innerText = playersLob[0];
