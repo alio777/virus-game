@@ -1,59 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Odibee+Sans&display=swap');
+
+
+.load {
+	width: 200px;
+	height: 200px;
+}
+
+.hide {
+    display: none !important;
+}
+
 #app {
-	background-color: aliceblue;
+	background-color: #aacadd;
 	height: 100vh;
 	width: 100vw;
 }
 
-.hide {
-	display: none !important;
-}
-
-#start {
+#startPage {
 	display: flex;
 	height: 100vh;
 	align-items: center;
-}
-
-#username-form {
-	margin: 0 auto;
-	text-align: center;
-}
-
-#chat-wrapper {
-	display: flex;
-	height: 100vh;
-}
-
-#chat {
-	display: flex;
 	flex-direction: column;
-	flex-grow: 1;
-	border-right: 1px solid #555;
+	justify-content: center;
 }
 
-#chat .form-group {
-	flex-grow: 1;
+#playingField {
+	height: 100vh;
+	display: flex;
+	justify-content: flex-start;
+}
+#gameBoard {
+	margin-left: 3rem;
+	margin-right: 3rem;
+	margin-top: 3rem;
+	width: 75%;
+}
+
+#play {
+	background-color: rgb(255, 255, 255);
+	height: 350px;
+	width: 540px;
+	position: relative;
+	margin: auto;
 	display: flex;
 }
 
-#chat .form-group #message {
-	flex-grow: 1;
+#virus {
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	position: absolute;
+	top: 200px;
+	left: 200px;
 }
 
-#users {
-	flex-basis: 20%;
+#waitForConnect p {
+	font-size: 1.5rem;
 }
 
-#users h2 {
-	background-color: cornflowerblue;
-	padding: 0.5rem 0.75rem;
-	color: white;
+#getReady {
+	font-size: 8rem;
 }
 
-#users ul {
-	margin: 0;
-	padding: 0.5rem 0.75rem;
-	list-style: none;
+#countdown {
+	font-size: 6rem;
+	display: flex;
+	align-items: center;
+	margin: 0 auto;
 }
 
 #message-wrapper {
@@ -66,9 +79,4 @@
 
 #messages .notice {
 	font-style: italic;
-}
-#gameboard {
-	background-color: #555;
-	height: 100%;
-	width: 100%;
 }

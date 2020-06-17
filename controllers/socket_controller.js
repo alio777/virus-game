@@ -2,76 +2,61 @@
  * Socket Controller
  */
 
-const debug = require('debug')('09-simple-chat:socket_controller');
-const users = {};
+const debug = require('debug')('covidGame:socket_controller');
+
+let io = null;
+const users = {}; 
+let games = 0  // spel börjar med 0 rundor
 
 
-/**
- * Get usernames of online users
- */
-function getOnlineUsers() {
+// Get nicknames of online users
+function getPlayersOnline() {
 	return Object.values(users);
 }
+// Get random position
+function randomPosition (range) {
+	return Math.floor(Math.random() * range)
+};
 
-/**
- * Handle user disconnecting
- */
-function handleUserDisconnect() {
-	debug(`Socket ${this.id} left the chat :(`);
-
-	// broadcast to all connected sockets that this user has left the chat
-	if (users[this.id]) {
-		this.broadcast.emit('user-disconnected', users[this.id]);
-	}
-
-	// remove user from list of connected users
-	delete users[this.id];
+function checkPlayersOnline() {
+    if (Object.keys(users).length === 2) {
+        io.emit('create-game-page');
+    } else {
+        return;
+    }
 }
 
-/**
- * Handle incoming chat-message
- */
-
-
-
-function handleChatMsg (msg, ranPos) {
-	debug("Someone sent something nice: '%s'",  msg);
-	debug("Someone sent something nice: '%s'",  ranPos);
-	//io.emit('chatmsg', msg); // emit to all connected sockets
-	
-	
-	// broadcast to all connected sockets EXCEPT ourselves
-	this.broadcast.emit('chatmsg', msg, ranPos);
-
-}
-
-
-
-/**
- * Handle a new user connecting
- */
-function handleRegisterUser(username, callback) {
-	debug("User '%s' connected to the chat", username);
-	users[this.id] = username;
+function handlePlayerRegistration(nickname, callback) {
+	users[this.id] = nickname;
 	callback({
-		joinChat: true,
-		usernameInUse: false,
-		onlineUsers: getOnlineUsers(),
+		joinGame: true,
+		nicknameInUse: false,
+		onlinePlayers: getPlayersOnline(),
 	});
+	checkPlayersOnline();
+	this.broadcast.emit('players-online', getPlayersOnline());
+}
 
-	// broadcast to all connected sockets EXCEPT ourselves
-	this.broadcast.emit('new-user-connected', username);
-
-	// broadcast online users to all connected sockets EXCEPT ourselves
-	this.broadcast.emit('online-users', getOnlineUsers());
+function handlePlayerClick(data) {
+	games ++;
+	const datainfo = {
+		nickname: data.name,
+		score: data.score,
+		reaction: data.reaction,
+		games: games,
+	}
+	const clickVirusPosition = {
+		width: randomPosition(300),
+		height: randomPosition(500)
+	}
+		io.emit('new-round', clickVirusPosition, datainfo);
 }
 
 module.exports = function(socket) {
-	// this = io
+	io = this;
 	debug(`Client ${socket.id} connected!`);
 
-	socket.on('disconnect', handleUserDisconnect);
-
-	socket.on('chatmsg', handleChatMsg);
-	socket.on('register-user', handleRegisterUser);
+	socket.on('player-click', handlePlayerClick);
+	socket.on('register-player', handlePlayerRegistration);
+	socket.on('create-game-page', checkPlayersOnline);
 }

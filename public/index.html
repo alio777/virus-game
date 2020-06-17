@@ -3,43 +3,57 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>📢</title>
+	<title>Virus Spel</title>
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
-	<link rel="stylesheet" href="/assets/css/style.css">
+	<link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
 	<div id="app">
-		<div id="start" class="container">
-			<form id="username-form">
+		<div id="startPage" class="container">
+			<h2>DÖDA VIRUS!</h2>
+			<form id="playerNickname-form">
 				<div class="form-group">
-					<input type="text" id="username" class="form-control form-control-lg" required placeholder="Who art thou'?">
+					<input type="text" id="nickname" class="form-control form-control-lg" required placeholder="Användarnamn...">
 				</div>
+				<button type="submit" class="btn btn-success">Anslut</button>
+			</form>
+		</div>
 
-				<button type="submit" class="btn btn-primary">Connect!</button>
-			</form><!-- /#username-form -->
-		</div><!-- /#start -->
+    <div id="waitForConnect" class="hide">
+        <p>Så fort spelare 2 ansluter startas spelet...</p>
+    </div>
 
-		<div id="chat-wrapper" class="hide">
-			<div id="chat">
-				<button id="message-form">START !</button>
-				<p id="printReactionTime"></p>
-				<div id="gameboard">
-					<div id="wait"></div>
+		<div id="playingField" class="hide">
+			<div id="gameBoard">
+				<div id="play">
+					<img id="virus" src="./assets/images/virus.png" alt="Virus" class="hide">
+				</div>						
+			</div>
 
+			<div id="players">
+				<div style="margin-top: 4rem;">
+					<div id="playerOne">
+						<h3 id="playerOneName"></h3>
+						<div id="playerOneInfo">
+							<p>poäng: 0</p>
+							<p>reaktions tid:</p>
+						</div>
+					</div>
+					<div id="playerTwo">
+						<h3 id="playerTwoName"></h3>
+						<div id="playerTwoInfo">
+							<p>Poäng: 0</p>
+							<p>reaktions tid:</p>
+						</div>
+					</div>
 				</div>
-			</div><!-- /#chat -->
-
-			<div id="users">
-				<h2>Users online</h2>
-				<ul id="online-users"></ul>
-			</div><!-- /#users -->
-		</div><!-- /#chat-wrapper -->
-	</div><!-- /#app -->
+			</div>
+		</div>
+	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="/assets/js/chat.js"></script>
+	<script src="/assets/js/client.js"></script>
 </body>
 </html>
